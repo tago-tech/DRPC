@@ -19,6 +19,9 @@ public class Server {
             socket.close();
         }
     }
+    /**
+     * 解析具体的请求
+     * */
     public static void process (Socket socket) throws Exception {
 
         System.out.println("Connected : " + socket.toString());
@@ -42,6 +45,7 @@ public class Server {
 
         //service
         QueryBookService queryBookService = new QueryBookServiceImp();
+        //reflect apply
         Method method = queryBookService.getClass().getMethod(methodName,paramtersTye);
         Book book = (Book)method.invoke(queryBookService,args);
 

@@ -41,7 +41,12 @@ public class Stub {
                 return book;
             }
         };
-        //设置代理 (动态代理)
+        /**
+         * 动态代理
+         * JVM 会根据接口的 class 类动态创建一个代理类对象，
+         * 这个代理对象实现了传入的接口，也就是说它拥有了接口中所有方法的实现。
+         * 方法具体的实现可以由用户指定，也就是调用InvocationHandler的invoke方法
+         * */
         Object object = Proxy.newProxyInstance(QueryBookService.class.getClassLoader(),new Class[]{QueryBookService.class},invocationHandler);
         //返回代理结果
         return (QueryBookService) object;

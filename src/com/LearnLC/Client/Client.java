@@ -16,6 +16,6 @@ import java.net.Socket;
 public class Client {
     public static void main (String[] args) throws IOException {
         QueryBookService queryBookService = Stub.getStub();
-        System.out.println(queryBookService.queryBooksById(456));
+        System.out.println(queryBookService.queryBooksByName("wars and peace"));
     }
 }

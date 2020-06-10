@@ -3,6 +3,9 @@ package com.LearnLC.Server;
 import com.LearnLC.RAPI.Book;
 import com.LearnLC.RAPI.QueryBookService;
 
+/**
+ * 服务端实现服务的实体类
+ * */
 public class QueryBookServiceImp implements QueryBookService {
     @Override
     public Book queryBooksById(Integer id) {
