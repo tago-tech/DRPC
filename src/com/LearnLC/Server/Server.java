@@ -5,11 +5,13 @@ import com.LearnLC.RAPI.Constants;
 import com.LearnLC.RAPI.QueryBookService;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static void main (String[] args) throws IOException {
+    public static void main (String[] args) throws Exception {
         ServerSocket serverSocket = new ServerSocket(Constants.port);
         while (true) {
             Socket socket = serverSocket.accept();
@@ -17,27 +19,37 @@ public class Server {
             socket.close();
         }
     }
-    public static void process (Socket socket) throws IOException {
+    public static void process (Socket socket) throws Exception {
 
         System.out.println("Connected : " + socket.toString());
         //get output and input
-        OutputStream outputStream = socket.getOutputStream();
-        InputStream inputStream = socket.getInputStream();
-        DataInputStream dataInputStream = new DataInputStream(inputStream);
-        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        Integer id = dataInputStream.readInt();
+        OutputStream outputStream = null;
+        InputStream inputStream = null;
+        ObjectInputStream objectInputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+        //get output and input
+        outputStream = socket.getOutputStream();
+        inputStream = socket.getInputStream();
+        objectInputStream = new ObjectInputStream(inputStream);
+        objectOutputStream = new ObjectOutputStream(outputStream);
 
+        //parse method
+        String methodName = objectInputStream.readUTF();
+        //parse paramters type thinking overload
+        Class[] paramtersTye = (Class[]) objectInputStream.readObject();
+        //parse paramters
+        Object[] args = (Object[])objectInputStream.readObject();
+
+        //service
         QueryBookService queryBookService = new QueryBookServiceImp();
-        Book book = queryBookService.queryBooksById(id);
+        Method method = queryBookService.getClass().getMethod(methodName,paramtersTye);
+        Book book = (Book)method.invoke(queryBookService,args);
 
-        dataOutputStream.writeInt(book.getId());
-        dataOutputStream.writeUTF(book.getBookName());
-        dataOutputStream.flush();
+        //output result
+        objectOutputStream.writeObject(book);
 
-        dataInputStream.close();
-        dataOutputStream.close();
-        outputStream.close();
-        inputStream.close();
+
+
     }
 
 }
